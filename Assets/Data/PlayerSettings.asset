@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 8000
   jumpForce: 50
+  dashForce: 25
   goLeft: 97
   goRight: 100
   goUp: 119

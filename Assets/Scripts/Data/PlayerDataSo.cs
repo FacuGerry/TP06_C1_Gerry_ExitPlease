@@ -8,6 +8,7 @@ public class PlayerDataSo : ScriptableObject
     [Header("Stats")]
     public float speed;
     public float jumpForce;
+    public float dashForce;
 
     [Header("Key Bindings")]
     public KeyCode goLeft;

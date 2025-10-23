@@ -27,10 +27,10 @@ public class PlayerAttack : MonoBehaviour
     private IEnumerator WaitingToDeactivate()
     {
         isAttacking = true;
-        yield return new WaitForSeconds(0.55f);
+        yield return new WaitForSeconds(0.2525f);
         swordColliderSide.SetActive(true);
         swordColliderUp.SetActive(true);
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.15f);
         swordColliderSide.SetActive(false);
         swordColliderUp.SetActive(false);
         isAttacking = false;

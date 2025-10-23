@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour
     public static event Action<PlayerController> onPlayerAttack;
     public static event Action<PlayerController> onPlayerDie;
     public static event Action<PlayerController> onPlayerJump;
-    public static event Action<PlayerController> onPlayerDash;
     public static event Action<PlayerController> onPause;
     public static event Action<PlayerController> onResume;
     public static event Action<PlayerController, int> onAnimating;
@@ -23,6 +22,7 @@ public class PlayerController : MonoBehaviour
     [NonSerialized] public bool canJumpTwice = true;
     [NonSerialized] public bool isWalking = false;
     [NonSerialized] public bool isAttacking = false;
+    [NonSerialized] public bool isDashing = false;
     private bool isPause = false;
 
     private enum AnimationStates
@@ -32,7 +32,8 @@ public class PlayerController : MonoBehaviour
         Jump = 2,
         Attack = 3,
         Hurt = 4,
-        Death = 5
+        Death = 5,
+        Dash = 6
     };
 
     private void Awake()
@@ -121,6 +122,20 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(nameof(WaitingForNewAttack));
                 onPlayerAttack?.Invoke(this);
             }
+
+            if (Input.GetKey(data.dash) && !isDashing)
+            {
+                if (transform.rotation.y == 0)
+                {
+                    playerRigidbody.AddForce(Vector2.right * data.dashForce, ForceMode2D.Impulse);
+                }
+                else
+                {
+                    playerRigidbody.AddForce(Vector2.left * data.dashForce, ForceMode2D.Impulse);
+                }
+                isDashing = true;
+                onAnimating?.Invoke(this, (int)AnimationStates.Dash);
+            }
         }
     }
 
@@ -153,7 +168,7 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator WaitingForNewAttack()
     {
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(0.4f);
         isAttacking = false;
         yield return null;
     }

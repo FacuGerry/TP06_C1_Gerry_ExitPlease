@@ -1,16 +1,22 @@
+using Cinemachine;
 using UnityEngine;
 
 public class CameraControl : MonoBehaviour
 {
-    [SerializeField] private GameObject player;
-    private Vector3 initialPosition;
+    private CinemachineVirtualCamera cinemachineCamera;
+
+    private void Awake()
+    {
+        cinemachineCamera = GetComponent<CinemachineVirtualCamera>();
+    }
+
     void Start()
     {
-        initialPosition = transform.position;
+        
     }
 
     void Update()
     {
-        transform.position = new Vector3(player.transform.position.x, initialPosition.y, initialPosition.z);
+
     }
 }

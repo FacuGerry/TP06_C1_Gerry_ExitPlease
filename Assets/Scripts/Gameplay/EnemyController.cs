@@ -6,6 +6,7 @@ public class EnemyController : MonoBehaviour
     public event Action onEnemyDeath;
 
     private Rigidbody2D enemyRigidbody;
+    private SpriteRenderer spriteRenderer;
 
     [SerializeField] private HealthSystem healthSystem;
     [SerializeField] private EnemyDataSo enemyData;
@@ -19,6 +20,7 @@ public class EnemyController : MonoBehaviour
     private void Awake()
     {
         enemyRigidbody = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void OnEnable()
@@ -58,25 +60,23 @@ public class EnemyController : MonoBehaviour
         if (transform.position.x <= limitLeft) //Si toca el borde izquierdo
         {
             enemyRigidbody.velocityX = enemySpeed;
-            transform.rotation = new Quaternion(0, 180, 0, 0);
-
+            spriteRenderer.flipX = true;
         }
         if (transform.position.x >= limitRight) //Si toca el borde derecho
         {
             enemyRigidbody.velocityX = -enemySpeed;
-            transform.rotation = new Quaternion(0, 00, 0, 0);
-
+            spriteRenderer.flipX = false;
         }
 
         if (enemyRigidbody.velocityX < enemySpeed && enemyRigidbody.velocityX >= 0)
         {
             enemyRigidbody.velocityX = enemySpeed;
-            transform.rotation = new Quaternion(0, 180, 0, 0);
+            spriteRenderer.flipX = true;
         }
         if (enemyRigidbody.velocityX > -enemySpeed && enemyRigidbody.velocityX < 0)
         {
             enemyRigidbody.velocityX = -enemySpeed;
-            transform.rotation = new Quaternion(0, 0, 0, 0);
+            spriteRenderer.flipX = false;
         }
     }
 

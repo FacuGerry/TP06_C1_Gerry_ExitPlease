@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D playerRigidbody;
 
     [NonSerialized] public bool isJumping = false;
+    [NonSerialized] public bool canJumpTwice = true;
     [NonSerialized] public bool isWalking = false;
     [NonSerialized] public bool isAttacking = false;
     private bool isPause = false;
@@ -94,12 +95,24 @@ public class PlayerController : MonoBehaviour
                 isWalking = true;
             }
 
-            if (Input.GetKey(data.goUp) && !isJumping)
+            if (Input.GetKey(data.goUp))
             {
-                playerRigidbody.velocityY = 0f;
-                playerRigidbody.AddForce(Vector2.up * data.jumpForce, ForceMode2D.Impulse);
-                isJumping = true;
-                onPlayerJump?.Invoke(this);
+                if (!isJumping)
+                {
+                    playerRigidbody.velocityY = 0f;
+                    playerRigidbody.AddForce(Vector2.up * data.jumpForce, ForceMode2D.Impulse);
+                    isJumping = true;
+                    canJumpTwice = true;
+                    onPlayerJump?.Invoke(this);
+                }
+
+                if (isJumping && canJumpTwice)
+                {
+                    playerRigidbody.velocityY = 0f;
+                    playerRigidbody.AddForce(Vector2.up * data.jumpForce, ForceMode2D.Impulse);
+                    canJumpTwice = false;
+                    onPlayerJump?.Invoke(this);
+                }
             }
 
             if (Input.GetKey(data.attack))
@@ -140,7 +153,7 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator WaitingForNewAttack()
     {
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(0.8f);
         isAttacking = false;
         yield return null;
     }

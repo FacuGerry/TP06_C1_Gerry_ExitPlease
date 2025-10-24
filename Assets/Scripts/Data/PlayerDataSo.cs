@@ -9,6 +9,7 @@ public class PlayerDataSo : ScriptableObject
     public float speed;
     public float jumpForce;
     public float dashForce;
+    public int posibleJumps;
 
     [Header("Key Bindings")]
     public KeyCode goLeft;

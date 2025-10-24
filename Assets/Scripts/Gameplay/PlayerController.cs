@@ -19,10 +19,10 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D playerRigidbody;
 
     [NonSerialized] public bool isJumping = false;
-    [NonSerialized] public bool canJumpTwice = true;
     [NonSerialized] public bool isWalking = false;
     [NonSerialized] public bool isAttacking = false;
     [NonSerialized] public bool isDashing = false;
+
     private bool isPause = false;
 
     private enum AnimationStates
@@ -39,7 +39,10 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         playerRigidbody = GetComponent<Rigidbody2D>();
+    }
 
+    private void Start()
+    {
         isPause = false;
     }
 
@@ -53,6 +56,7 @@ public class PlayerController : MonoBehaviour
         if (!isPause)
         {
             Move();
+            Animate();
         }
         if (Input.GetKeyDown(data.pauseGame))
         {
@@ -70,7 +74,6 @@ public class PlayerController : MonoBehaviour
                     break;
             }
         }
-        Animate();
     }
 
     private void OnDisable()
@@ -102,16 +105,6 @@ public class PlayerController : MonoBehaviour
                 {
                     playerRigidbody.velocityY = 0f;
                     playerRigidbody.AddForce(Vector2.up * data.jumpForce, ForceMode2D.Impulse);
-                    isJumping = true;
-                    canJumpTwice = true;
-                    onPlayerJump?.Invoke(this);
-                }
-
-                if (isJumping && canJumpTwice)
-                {
-                    playerRigidbody.velocityY = 0f;
-                    playerRigidbody.AddForce(Vector2.up * data.jumpForce, ForceMode2D.Impulse);
-                    canJumpTwice = false;
                     onPlayerJump?.Invoke(this);
                 }
             }
@@ -141,22 +134,25 @@ public class PlayerController : MonoBehaviour
 
     public void Animate()
     {
-        if (isWalking && !isJumping)
+        if (!isJumping)
         {
-            onAnimating?.Invoke(this, (int)AnimationStates.Walk);
-            isWalking = false;
+            if (isWalking)
+            {
+                onAnimating?.Invoke(this, (int)AnimationStates.Walk);
+                isWalking = false;
+            }
+            else if (!isWalking && isAttacking)
+            {
+                onAnimating?.Invoke(this, (int)AnimationStates.Attack);
+            }
+            else
+            {
+                onAnimating?.Invoke(this, (int)AnimationStates.Idle);
+            }
         }
         else if (isJumping)
         {
             onAnimating?.Invoke(this, (int)AnimationStates.Jump);
-        }
-        else if (isAttacking && !isWalking && !isJumping)
-        {
-            onAnimating?.Invoke(this, (int)AnimationStates.Attack);
-        }
-        else
-        {
-            onAnimating?.Invoke(this, (int)AnimationStates.Idle);
         }
     }
 

@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 311d325ffa0ad904d93c4d349b31721b, type: 3}
   m_Name: PlayerSettings
   m_EditorClassIdentifier: 
-  speed: 6500
-  jumpForce: 50
-  dashForce: 25
+  speed: 7000
+  jumpForce: 55
+  dashForce: 30
+  onHurtForce: 20
   posibleJumps: 2
   goLeft: 97
   goRight: 100

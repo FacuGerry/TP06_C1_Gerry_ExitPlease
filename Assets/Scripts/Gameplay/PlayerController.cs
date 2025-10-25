@@ -43,12 +43,14 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        Time.timeScale = 1.0f;
         isPause = false;
     }
 
     private void OnEnable()
     {
         healthSystem.onDie += HealthSystem_onDie;
+        EnemyController.onPlayerRecieveDamage += OnPlayerRecieveDamage_AnimateDamage;
     }
 
     private void Update()
@@ -79,6 +81,7 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         healthSystem.onDie -= HealthSystem_onDie;
+        EnemyController.onPlayerRecieveDamage -= OnPlayerRecieveDamage_AnimateDamage;
     }
 
     public void Move()
@@ -134,7 +137,7 @@ public class PlayerController : MonoBehaviour
 
     public void Animate()
     {
-        if (!isJumping)
+        if (!isJumping && !isDashing)
         {
             if (isWalking)
             {
@@ -150,16 +153,32 @@ public class PlayerController : MonoBehaviour
                 onAnimating?.Invoke(this, (int)AnimationStates.Idle);
             }
         }
-        else if (isJumping)
+        else if (isJumping && !isDashing)
         {
             onAnimating?.Invoke(this, (int)AnimationStates.Jump);
+        }
+    }
+
+    public void OnPlayerRecieveDamage_AnimateDamage(EnemyController enemyController)
+    {
+        onAnimating?.Invoke(this, (int)AnimationStates.Hurt);
+
+        if (transform.rotation.y == 0)
+        {
+            playerRigidbody.AddForce(Vector2.left * data.onHurtForce, ForceMode2D.Impulse);
+        }
+        else
+        {
+            playerRigidbody.AddForce(Vector2.right * data.onHurtForce, ForceMode2D.Impulse);
         }
     }
 
     public void HealthSystem_onDie()
     {
         onPlayerDie?.Invoke(this);
-        gameObject.SetActive(false);
+        onAnimating?.Invoke(this, (int)AnimationStates.Death);
+        isPause = true;
+        Time.timeScale = 0f;
     }
 
     private IEnumerator WaitingForNewAttack()

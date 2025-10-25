@@ -4,6 +4,7 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     public event Action onEnemyDeath;
+    public static event Action<EnemyController> onPlayerRecieveDamage;
 
     private Rigidbody2D enemyRigidbody;
     private SpriteRenderer spriteRenderer;
@@ -47,6 +48,7 @@ public class EnemyController : MonoBehaviour
         if (collision.collider.TryGetComponent(out HealthSystem healthSystem))
         {
             healthSystem.DoDamage((int)damage);
+            onPlayerRecieveDamage?.Invoke(this);
         }
     }
 
@@ -60,23 +62,23 @@ public class EnemyController : MonoBehaviour
         if (transform.position.x <= limitLeft) //Si toca el borde izquierdo
         {
             enemyRigidbody.velocityX = enemySpeed;
-            spriteRenderer.flipX = true;
+            transform.rotation = new Quaternion(0, 180, 0, 0);
         }
         if (transform.position.x >= limitRight) //Si toca el borde derecho
         {
             enemyRigidbody.velocityX = -enemySpeed;
-            spriteRenderer.flipX = false;
+            transform.rotation = new Quaternion(0, 0, 0, 0);
         }
 
         if (enemyRigidbody.velocityX < enemySpeed && enemyRigidbody.velocityX >= 0)
         {
             enemyRigidbody.velocityX = enemySpeed;
-            spriteRenderer.flipX = true;
+            transform.rotation = new Quaternion(0, 180, 0, 0);
         }
         if (enemyRigidbody.velocityX > -enemySpeed && enemyRigidbody.velocityX < 0)
         {
             enemyRigidbody.velocityX = -enemySpeed;
-            spriteRenderer.flipX = false;
+            transform.rotation = new Quaternion(0, 0, 0, 0);
         }
     }
 

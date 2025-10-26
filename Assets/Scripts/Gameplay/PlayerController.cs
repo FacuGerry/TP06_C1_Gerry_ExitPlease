@@ -21,10 +21,10 @@ public class PlayerController : MonoBehaviour
     [NonSerialized] public bool isJumping = false;
     [NonSerialized] public bool isWalking = false;
     [NonSerialized] public bool isAttacking = false;
-    [NonSerialized] public bool isDashing = false;
+    [NonSerialized] public bool isAnimatingDash = false;
 
     private bool isPause = false;
-
+    private bool isResetingDash = false;
     private enum AnimationStates
     {
         Idle = 0,
@@ -119,7 +119,7 @@ public class PlayerController : MonoBehaviour
                 onPlayerAttack?.Invoke(this);
             }
 
-            if (Input.GetKey(data.dash) && !isDashing)
+            if (Input.GetKey(data.dash) && !isResetingDash)
             {
                 if (transform.rotation.y == 0)
                 {
@@ -129,15 +129,15 @@ public class PlayerController : MonoBehaviour
                 {
                     playerRigidbody.AddForce(Vector2.left * data.dashForce, ForceMode2D.Impulse);
                 }
-                isDashing = true;
-                onAnimating?.Invoke(this, (int)AnimationStates.Dash);
+                StartCoroutine(nameof(DashReseting));
+                isAnimatingDash = true;
             }
         }
     }
 
     public void Animate()
     {
-        if (!isJumping && !isDashing)
+        if (!isJumping && !isAnimatingDash)
         {
             if (isWalking)
             {
@@ -153,9 +153,14 @@ public class PlayerController : MonoBehaviour
                 onAnimating?.Invoke(this, (int)AnimationStates.Idle);
             }
         }
-        else if (isJumping && !isDashing)
+        else if (isJumping && !isAnimatingDash)
         {
             onAnimating?.Invoke(this, (int)AnimationStates.Jump);
+        }
+        else if (isAnimatingDash)
+        {
+            onAnimating?.Invoke(this, (int)AnimationStates.Dash);
+            StartCoroutine(nameof(DashAnimationReseting));
         }
     }
 
@@ -185,6 +190,21 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(0.4f);
         isAttacking = false;
+        yield return null;
+    }
+
+    public IEnumerator DashReseting()
+    {
+        isResetingDash = true;
+        yield return new WaitForSeconds(1.3f);
+        isResetingDash = false;
+        yield return null;
+    }
+
+    public IEnumerator DashAnimationReseting()
+    {
+        yield return new WaitForSeconds(0.55f);
+        isAnimatingDash = false;
         yield return null;
     }
 }

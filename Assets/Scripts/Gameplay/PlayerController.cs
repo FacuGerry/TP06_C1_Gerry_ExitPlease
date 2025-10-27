@@ -90,6 +90,9 @@ public class PlayerController : MonoBehaviour
         {
             if (Input.GetKey(data.goLeft))
             {
+                if (isJumping)
+                {
+                }
                 playerRigidbody.AddForce(Vector2.left * data.speed * Time.deltaTime, ForceMode2D.Force);
                 transform.rotation = new Quaternion(0, 180, 0, 0);
                 isWalking = true;
@@ -97,6 +100,9 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey(data.goRight))
             {
+                if (isJumping)
+                {
+                }
                 playerRigidbody.AddForce(Vector2.right * data.speed * Time.deltaTime, ForceMode2D.Force);
                 transform.rotation = new Quaternion(0, 0, 0, 0);
                 isWalking = true;

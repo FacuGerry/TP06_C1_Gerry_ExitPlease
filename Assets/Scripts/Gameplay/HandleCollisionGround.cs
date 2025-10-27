@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class HandleCollisionGround : MonoBehaviour
@@ -9,11 +8,4 @@ public class HandleCollisionGround : MonoBehaviour
     {
         controller.isJumping = false;
     }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        controller.isJumping = true;
-    }
-
-
 }

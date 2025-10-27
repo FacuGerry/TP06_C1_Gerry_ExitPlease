@@ -22,9 +22,15 @@ public class PlayerController : MonoBehaviour
     [NonSerialized] public bool isWalking = false;
     [NonSerialized] public bool isAttacking = false;
     [NonSerialized] public bool isAnimatingDash = false;
+    [NonSerialized] public bool isAnimatingHurt = false;
 
     private bool isPause = false;
     private bool isResetingDash = false;
+
+    private bool playerCanMove = true;
+    private bool isAlive = true;
+
+    private int jumps = 0;
     private enum AnimationStates
     {
         Idle = 0,
@@ -33,7 +39,8 @@ public class PlayerController : MonoBehaviour
         Attack = 3,
         Hurt = 4,
         Death = 5,
-        Dash = 6
+        Dash = 6,
+        StayDead = 7
     };
 
     private void Awake()
@@ -45,6 +52,8 @@ public class PlayerController : MonoBehaviour
     {
         Time.timeScale = 1.0f;
         isPause = false;
+        playerCanMove = true;
+        isAlive = true;
     }
 
     private void OnEnable()
@@ -86,13 +95,10 @@ public class PlayerController : MonoBehaviour
 
     public void Move()
     {
-        if (!isAttacking)
+        if (!isAttacking && playerCanMove)
         {
             if (Input.GetKey(data.goLeft))
             {
-                if (isJumping)
-                {
-                }
                 playerRigidbody.AddForce(Vector2.left * data.speed * Time.deltaTime, ForceMode2D.Force);
                 transform.rotation = new Quaternion(0, 180, 0, 0);
                 isWalking = true;
@@ -100,9 +106,6 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey(data.goRight))
             {
-                if (isJumping)
-                {
-                }
                 playerRigidbody.AddForce(Vector2.right * data.speed * Time.deltaTime, ForceMode2D.Force);
                 transform.rotation = new Quaternion(0, 0, 0, 0);
                 isWalking = true;
@@ -112,9 +115,17 @@ public class PlayerController : MonoBehaviour
             {
                 if (!isJumping)
                 {
-                    playerRigidbody.velocityY = 0f;
-                    playerRigidbody.AddForce(Vector2.up * data.jumpForce, ForceMode2D.Impulse);
-                    onPlayerJump?.Invoke(this);
+                    if (jumps >= 2)
+                    {
+                        jumps = 0;
+                        isJumping = true;
+                    }
+                    else
+                    {
+                        playerRigidbody.velocityY = 0f;
+                        playerRigidbody.AddForce(Vector2.up * data.jumpForce, ForceMode2D.Impulse);
+                    }
+                    jumps++;
                 }
             }
 
@@ -143,37 +154,44 @@ public class PlayerController : MonoBehaviour
 
     public void Animate()
     {
-        if (!isJumping && !isAnimatingDash)
+        if (isAlive)
         {
-            if (isWalking)
+            if (!isJumping && !isAnimatingDash && !isAnimatingHurt)
             {
-                onAnimating?.Invoke(this, (int)AnimationStates.Walk);
-                isWalking = false;
+                if (isWalking)
+                {
+                    onAnimating?.Invoke(this, (int)AnimationStates.Walk);
+                    isWalking = false;
+                }
+                else if (!isWalking && isAttacking)
+                {
+                    onAnimating?.Invoke(this, (int)AnimationStates.Attack);
+                }
+                else
+                {
+                    onAnimating?.Invoke(this, (int)AnimationStates.Idle);
+                }
             }
-            else if (!isWalking && isAttacking)
+            else if (isJumping && !isAnimatingDash && !isAnimatingHurt)
             {
-                onAnimating?.Invoke(this, (int)AnimationStates.Attack);
+                onAnimating?.Invoke(this, (int)AnimationStates.Jump);
             }
-            else
+            else if (isAnimatingDash)
             {
-                onAnimating?.Invoke(this, (int)AnimationStates.Idle);
+                onAnimating?.Invoke(this, (int)AnimationStates.Dash);
+                StartCoroutine(nameof(DashAnimationReseting));
             }
-        }
-        else if (isJumping && !isAnimatingDash)
-        {
-            onAnimating?.Invoke(this, (int)AnimationStates.Jump);
-        }
-        else if (isAnimatingDash)
-        {
-            onAnimating?.Invoke(this, (int)AnimationStates.Dash);
-            StartCoroutine(nameof(DashAnimationReseting));
+            else if (isAnimatingHurt)
+            {
+                onAnimating?.Invoke(this, (int)AnimationStates.Hurt);
+                StartCoroutine(nameof(HurtAnimationReseting));
+            }
         }
     }
 
     public void OnPlayerRecieveDamage_AnimateDamage(EnemyController enemyController)
     {
-        onAnimating?.Invoke(this, (int)AnimationStates.Hurt);
-
+        isAnimatingHurt = true;
         if (transform.rotation.y == 0)
         {
             playerRigidbody.AddForce(Vector2.left * data.onHurtForce, ForceMode2D.Impulse);
@@ -187,9 +205,10 @@ public class PlayerController : MonoBehaviour
     public void HealthSystem_onDie()
     {
         onPlayerDie?.Invoke(this);
+        playerCanMove = false;
+        isAlive = false;
         onAnimating?.Invoke(this, (int)AnimationStates.Death);
-        isPause = true;
-        Time.timeScale = 0f;
+        StartCoroutine(nameof(StayingDead));
     }
 
     private IEnumerator WaitingForNewAttack()
@@ -211,6 +230,21 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(0.55f);
         isAnimatingDash = false;
+        yield return null;
+    }
+    public IEnumerator HurtAnimationReseting()
+    {
+        playerCanMove = false;
+        yield return new WaitForSeconds(0.3f);
+        playerCanMove = true;
+        isAnimatingHurt = false;
+        yield return null;
+    }
+
+    public IEnumerator StayingDead()
+    {
+        yield return new WaitForSeconds(.5f);
+        onAnimating?.Invoke(this, (int)AnimationStates.StayDead);
         yield return null;
     }
 }

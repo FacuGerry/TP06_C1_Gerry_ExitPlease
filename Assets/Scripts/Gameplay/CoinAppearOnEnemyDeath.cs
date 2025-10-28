@@ -4,11 +4,11 @@ public class CoinAppearOnEnemyDeath : MonoBehaviour
 {
     [SerializeField] private GameObject enemy;
     [SerializeField] private GameObject coin;
-    private EnemyController enemyController;
+    private SlimeController enemyController;
 
     private void Awake()
     {
-        enemyController = enemy.GetComponent<EnemyController>();
+        enemyController = enemy.GetComponent<SlimeController>();
     }
 
     private void OnEnable()

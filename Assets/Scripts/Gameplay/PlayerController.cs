@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour
     private bool playerCanMove = true;
     private bool isAlive = true;
 
-    private int jumps = 0;
     private enum AnimationStates
     {
         Idle = 0,
@@ -59,7 +58,7 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         healthSystem.onDie += HealthSystem_onDie;
-        EnemyController.onPlayerRecieveDamage += OnPlayerRecieveDamage_AnimateDamage;
+        SlimeController.onPlayerRecieveDamage += OnPlayerRecieveDamage_AnimateDamage;
     }
 
     private void Update()
@@ -90,7 +89,7 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         healthSystem.onDie -= HealthSystem_onDie;
-        EnemyController.onPlayerRecieveDamage -= OnPlayerRecieveDamage_AnimateDamage;
+        SlimeController.onPlayerRecieveDamage -= OnPlayerRecieveDamage_AnimateDamage;
     }
 
     public void Move()
@@ -111,22 +110,11 @@ public class PlayerController : MonoBehaviour
                 isWalking = true;
             }
 
-            if (Input.GetKey(data.goUp))
+            if (Input.GetKey(data.goUp) && !isJumping)
             {
-                if (!isJumping)
-                {
-                    if (jumps >= 2)
-                    {
-                        jumps = 0;
-                        isJumping = true;
-                    }
-                    else
-                    {
-                        playerRigidbody.velocityY = 0f;
-                        playerRigidbody.AddForce(Vector2.up * data.jumpForce, ForceMode2D.Impulse);
-                    }
-                    jumps++;
-                }
+                isJumping = true;
+                playerRigidbody.velocityY = 0f;
+                playerRigidbody.AddForce(Vector2.up * data.jumpForce, ForceMode2D.Impulse);
             }
 
             if (Input.GetKey(data.attack))
@@ -189,7 +177,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void OnPlayerRecieveDamage_AnimateDamage(EnemyController enemyController)
+    public void OnPlayerRecieveDamage_AnimateDamage(SlimeController enemyController)
     {
         isAnimatingHurt = true;
         if (transform.rotation.y == 0)

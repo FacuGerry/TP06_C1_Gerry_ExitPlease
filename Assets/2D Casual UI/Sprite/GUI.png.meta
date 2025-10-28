@@ -1064,7 +1064,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GUI_35
+      name: REPLAY
       rect:
         serializedVersion: 2
         x: 387
@@ -1085,7 +1085,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GUI_36
+      name: MENU
       rect:
         serializedVersion: 2
         x: 569
@@ -1666,8 +1666,6 @@ TextureImporter:
       GUI_32: 21300064
       GUI_33: 21300066
       GUI_34: 21300068
-      GUI_35: 21300070
-      GUI_36: 21300072
       GUI_4: 21300008
       GUI_42: 21300074
       GUI_43: 21300076
@@ -1699,7 +1697,9 @@ TextureImporter:
       GUI_9: 21300018
       GUI_X: 21300046
       GUI_Z: 21300038
+      MENU: 21300072
       PANEL: 21300054
+      REPLAY: 21300070
       SLIDER_BKCG: 21300026
       SLIDER_FILL: 21300024
       TITLE: 21300102

@@ -2,17 +2,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class UiPlayerDie : MonoBehaviour
 {
-    [SerializeField] private CoinsDataSo coinsData;
     [SerializeField] private GameObject loseScreen;
-    [SerializeField] private GameObject coinsCounter;
-    [SerializeField] private TextMeshProUGUI coinsNum;
-    [SerializeField] private TextMeshProUGUI totalCoinsNum;
     [SerializeField] private Button btnReplay;
     [SerializeField] private Button btnMainMenu;
-    [SerializeField] private string sceneToLoad;
 
     private void Start()
     {
@@ -38,22 +34,23 @@ public class UiPlayerDie : MonoBehaviour
 
     public void ReplayClicked()
     {
-        SceneManager.LoadScene(sceneToLoad);
-        Time.timeScale = 1f;
+        SceneManager.LoadScene("Gameplay");
     }
 
     public void MainMenuClicked()
     {
         SceneManager.LoadScene("MainMenu");
-        Time.timeScale = 1f;
     }
 
     public void OnPlayerDie_LoseUi(PlayerController playerController)
     {
-        Time.timeScale = 0;
-        coinsNum.text = coinsData.coins.ToString("0");
-        totalCoinsNum.text = coinsData.totalCoins.ToString("0");
-        coinsCounter.SetActive(false);
+        StartCoroutine(nameof(WaitingForLoseScreen));
+    }
+
+    public IEnumerator WaitingForLoseScreen()
+    {
+        yield return new WaitForSeconds(3f);
         loseScreen.SetActive(true);
+        yield return null;
     }
 }

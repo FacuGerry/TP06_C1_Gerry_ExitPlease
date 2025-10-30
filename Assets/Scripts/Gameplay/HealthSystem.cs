@@ -3,16 +3,20 @@ using UnityEngine;
 
 public class HealthSystem : MonoBehaviour
 {
-    public event Action<int, int> onLifeUpdated;
+    public event Action<int, int, int> onLifeUpdated;
     public event Action onDie;
 
-    private int life;
+    public int life;
+    public int actualMaxLife;
+
+    public int initialLife = 50;
     public int maxLife = 100;
 
     private void Start()
     {
-        life = maxLife;
-        onLifeUpdated?.Invoke(life, maxLife);
+        life = initialLife;
+        actualMaxLife = initialLife;
+        onLifeUpdated?.Invoke(initialLife, actualMaxLife, maxLife);
     }
 
     public void DoDamage(int damage)
@@ -32,7 +36,7 @@ public class HealthSystem : MonoBehaviour
         }
         else
         {
-            onLifeUpdated?.Invoke(life, maxLife);
+            onLifeUpdated?.Invoke(life, actualMaxLife, maxLife);
         }
 
         Debug.Log("DoDamage", gameObject);
@@ -48,10 +52,20 @@ public class HealthSystem : MonoBehaviour
 
         life += plus;
 
-        if (life > maxLife)
-            life = maxLife;
+        if (life > actualMaxLife)
+            life = actualMaxLife;
 
         Debug.Log("Heal");
-        onLifeUpdated?.Invoke(life, maxLife);
+        onLifeUpdated?.Invoke(life, actualMaxLife, maxLife);
+    }
+
+    public void AddLife(int plus)
+    {
+        actualMaxLife += plus;
+        if (actualMaxLife >= maxLife)
+        {
+            actualMaxLife = maxLife;
+        }
+        onLifeUpdated?.Invoke(life, actualMaxLife, maxLife);
     }
 }

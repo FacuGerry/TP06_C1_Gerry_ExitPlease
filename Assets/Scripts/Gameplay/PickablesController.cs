@@ -7,10 +7,12 @@ public class PickablesController : MonoBehaviour
 
     [Header("Type of pickable")]
     [SerializeField] private bool isLife = false;
+    [SerializeField] private bool isExtraLife = false;
     [SerializeField] private bool isCoin = false;
 
     [Header("Stats")]
     [SerializeField] private int lifeHeal;
+    [SerializeField] private int lifeAdd;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -27,6 +29,14 @@ public class PickablesController : MonoBehaviour
             if (collision.TryGetComponent(out HealthSystem healthSystem))
             {
                 healthSystem.Heal(lifeHeal);
+            }
+        }
+
+        if (isExtraLife)
+        {
+            if (collision.TryGetComponent(out HealthSystem healthSystem))
+            {
+                healthSystem.AddLife(lifeAdd);
             }
         }
     }

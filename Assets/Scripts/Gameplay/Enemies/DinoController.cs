@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class DinoController : MonoBehaviour
 {
-    [SerializeField] private Vector3 distance;
-    [SerializeField] private Vector3 offset;
+    [SerializeField] private float distance;
 
     private Animator anim;
 
@@ -17,11 +16,12 @@ public class DinoController : MonoBehaviour
 
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
-        Vector3 center = Vector3.one + (transform.position + offset);
-        Vector3 size = Vector3.one + distance;
-        Gizmos.DrawWireCube(center, size);
+        Vector3 start = transform.position;
+        Vector3 end = transform.position - transform.right * distance;
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(start, end);
     }
 }

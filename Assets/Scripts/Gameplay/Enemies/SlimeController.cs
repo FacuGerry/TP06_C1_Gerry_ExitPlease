@@ -7,7 +7,6 @@ public class SlimeController : MonoBehaviour
     public static event Action<SlimeController> onPlayerRecieveDamage;
 
     private Rigidbody2D enemyRigidbody;
-    private SpriteRenderer spriteRenderer;
 
     [SerializeField] private HealthSystem healthSystem;
     [SerializeField] private EnemyDataSo enemyData;
@@ -21,7 +20,6 @@ public class SlimeController : MonoBehaviour
     private void Awake()
     {
         enemyRigidbody = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void OnEnable()

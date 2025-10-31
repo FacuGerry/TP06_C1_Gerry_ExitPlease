@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
 
-public class PlayerDoDamge : MonoBehaviour
+public class PlayerDoDamage : MonoBehaviour
 {
+    public static event Action<PlayerDoDamage> onPlayerDoDamage;
+
     public int damage = 20;
     private void OnTriggerEnter2D(Collider2D collision)
     {

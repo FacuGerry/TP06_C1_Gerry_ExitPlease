@@ -6,8 +6,10 @@ public class PlayerController : MonoBehaviour
 {
 
     public static event Action<PlayerController> onPlayerAttack;
-    public static event Action<PlayerController> onPlayerDie;
     public static event Action<PlayerController> onPlayerJump;
+    public static event Action<PlayerController> onPlayerDash;
+    public static event Action<PlayerController> onPlayerHurt;
+    public static event Action<PlayerController> onPlayerDie;
     public static event Action<PlayerController> onPause;
     public static event Action<PlayerController> onResume;
     public static event Action<PlayerController, int> onAnimating;
@@ -63,25 +65,28 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (!isPause)
+        if (playerCanMove)
         {
-            Move();
-            Animate();
-        }
-        if (Input.GetKeyDown(data.pauseGame))
-        {
-            switch (isPause)
+            if (!isPause)
             {
-                case true:
-                    Time.timeScale = 1f;
-                    isPause = false;
-                    onResume?.Invoke(this);
-                    break;
-                case false:
-                    Time.timeScale = 0f;
-                    isPause = true;
-                    onPause?.Invoke(this);
-                    break;
+                Move();
+                Animate();
+            }
+            if (Input.GetKeyDown(data.pauseGame))
+            {
+                switch (isPause)
+                {
+                    case true:
+                        Time.timeScale = 1f;
+                        isPause = false;
+                        onResume?.Invoke(this);
+                        break;
+                    case false:
+                        Time.timeScale = 0f;
+                        isPause = true;
+                        onPause?.Invoke(this);
+                        break;
+                }
             }
         }
     }
@@ -94,7 +99,7 @@ public class PlayerController : MonoBehaviour
 
     public void Move()
     {
-        if (!isAttacking && playerCanMove)
+        if (!isAttacking)
         {
             if (Input.GetKey(data.goLeft))
             {
@@ -135,6 +140,7 @@ public class PlayerController : MonoBehaviour
                     playerRigidbody.AddForce(Vector2.left * data.dashForce, ForceMode2D.Impulse);
                 }
                 StartCoroutine(nameof(DashReseting));
+                onPlayerDash?.Invoke(this);
                 isAnimatingDash = true;
             }
         }
@@ -179,6 +185,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnPlayerRecieveDamage_AnimateDamage(SlimeController enemyController)
     {
+        onPlayerHurt?.Invoke(this);
         isAnimatingHurt = true;
         if (transform.rotation.y == 0)
         {

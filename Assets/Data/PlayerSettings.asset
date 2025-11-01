@@ -15,6 +15,7 @@ MonoBehaviour:
   speed: 3500
   jumpForce: 40
   dashForce: 30
+  dashCooldown: 1.3
   onHurtForce: 20
   posibleJumps: 2
   goLeft: 97

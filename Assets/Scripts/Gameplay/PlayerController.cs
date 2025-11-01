@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     [NonSerialized] public bool isAnimatingDash = false;
     [NonSerialized] public bool isAnimatingHurt = false;
 
-    private bool isPause = false;
+    [NonSerialized] public bool isPause = false;
     private bool isResetingDash = false;
 
     private bool playerCanMove = true;
@@ -120,6 +120,7 @@ public class PlayerController : MonoBehaviour
                 isJumping = true;
                 playerRigidbody.velocityY = 0f;
                 playerRigidbody.AddForce(Vector2.up * data.jumpForce, ForceMode2D.Impulse);
+                onPlayerJump?.Invoke(this);
             }
 
             if (Input.GetKey(data.attack))
@@ -139,8 +140,8 @@ public class PlayerController : MonoBehaviour
                 {
                     playerRigidbody.AddForce(Vector2.left * data.dashForce, ForceMode2D.Impulse);
                 }
-                StartCoroutine(nameof(DashReseting));
                 onPlayerDash?.Invoke(this);
+                StartCoroutine(nameof(DashReseting));
                 isAnimatingDash = true;
             }
         }
@@ -150,35 +151,39 @@ public class PlayerController : MonoBehaviour
     {
         if (isAlive)
         {
-            if (!isJumping && !isAnimatingDash && !isAnimatingHurt)
+            if (!isAttacking)
             {
-                if (isWalking)
+                if (!isJumping && !isAnimatingDash && !isAnimatingHurt)
                 {
-                    onAnimating?.Invoke(this, (int)AnimationStates.Walk);
-                    isWalking = false;
+                    if (isWalking)
+                    {
+                        onAnimating?.Invoke(this, (int)AnimationStates.Walk);
+                        isWalking = false;
+                    }
+                    else
+                    {
+                        onAnimating?.Invoke(this, (int)AnimationStates.Idle);
+                    }
                 }
-                else if (!isWalking && isAttacking)
+                else if (isJumping && !isAnimatingDash && !isAnimatingHurt)
                 {
-                    onAnimating?.Invoke(this, (int)AnimationStates.Attack);
+                    onAnimating?.Invoke(this, (int)AnimationStates.Jump);
                 }
-                else
+                else if (isAnimatingDash && !isAnimatingHurt)
                 {
-                    onAnimating?.Invoke(this, (int)AnimationStates.Idle);
+                    onAnimating?.Invoke(this, (int)AnimationStates.Dash);
+                    StartCoroutine(nameof(DashAnimationReseting));
                 }
-            }
-            else if (isJumping && !isAnimatingDash && !isAnimatingHurt)
-            {
-                onAnimating?.Invoke(this, (int)AnimationStates.Jump);
-            }
-            else if (isAnimatingDash)
-            {
-                onAnimating?.Invoke(this, (int)AnimationStates.Dash);
-                StartCoroutine(nameof(DashAnimationReseting));
             }
             else if (isAnimatingHurt)
             {
                 onAnimating?.Invoke(this, (int)AnimationStates.Hurt);
                 StartCoroutine(nameof(HurtAnimationReseting));
+            }
+            else if (isAttacking && !isAnimatingHurt)
+            {
+                isAnimatingDash = false;
+                onAnimating?.Invoke(this, (int)AnimationStates.Attack);
             }
         }
     }
@@ -216,7 +221,7 @@ public class PlayerController : MonoBehaviour
     public IEnumerator DashReseting()
     {
         isResetingDash = true;
-        yield return new WaitForSeconds(1.3f);
+        yield return new WaitForSeconds(data.dashCooldown);
         isResetingDash = false;
         yield return null;
     }

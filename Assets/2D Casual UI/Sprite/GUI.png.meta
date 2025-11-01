@@ -1127,7 +1127,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GUI_43
+      name: SETTINGS
       rect:
         serializedVersion: 2
         x: 213
@@ -1668,7 +1668,6 @@ TextureImporter:
       GUI_34: 21300068
       GUI_4: 21300008
       GUI_42: 21300074
-      GUI_43: 21300076
       GUI_44: 21300078
       GUI_45: 21300080
       GUI_46: 21300082
@@ -1700,6 +1699,7 @@ TextureImporter:
       MENU: 21300072
       PANEL: 21300054
       REPLAY: 21300070
+      SETTINGS: 21300076
       SLIDER_BKCG: 21300026
       SLIDER_FILL: 21300024
       TITLE: 21300102

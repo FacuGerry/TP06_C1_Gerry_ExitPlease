@@ -9,6 +9,7 @@ public class PlayerDataSo : ScriptableObject
     public float speed;
     public float jumpForce;
     public float dashForce;
+    public float dashCooldown;
     public float onHurtForce;
     public int posibleJumps;
 

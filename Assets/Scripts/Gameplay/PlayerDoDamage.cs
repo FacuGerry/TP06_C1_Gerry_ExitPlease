@@ -11,6 +11,7 @@ public class PlayerDoDamage : MonoBehaviour
         if (collision.TryGetComponent(out HealthSystem healthSystem))
         {
             healthSystem.DoDamage(damage);
+            onPlayerDoDamage?.Invoke(this);
         }
     }
 }

@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class SFXController : MonoBehaviour
 {
+    [Header("Sources")]
+    [SerializeField] private AudioSource master;
+    [SerializeField] private AudioSource sfx;
+
     [Header("Pickables")]
     [SerializeField] private AudioClip healClip;
     [SerializeField] private AudioClip extraLifeClip;
@@ -19,19 +23,13 @@ public class SFXController : MonoBehaviour
     [Header("Enemy")]
     [SerializeField] private AudioClip enemyHurtSound;
 
-    private AudioSource source;
-
-    private void Awake()
-    {
-        source = GetComponent<AudioSource>();
-    }
-
     private void OnEnable()
     {
         PickablesController.onPickablesMakeSound += OnCoinsPicked_EmmitSound;
 
         PlayerController.onPlayerAttack += OnPlayerAttack_AttackSound;
         PlayerController.onPlayerJump += OnPlayerJump_JumpSound;
+        PlayerController.onPlayerDash -= OnPlayerDash_DashSound;
         PlayerController.onPlayerHurt += OnPlayerHurt_HurtSound;
         PlayerController.onPlayerDie += OnPlayerDie_GameOverSound;
 
@@ -41,6 +39,7 @@ public class SFXController : MonoBehaviour
     private void OnDisable()
     {
         PickablesController.onPickablesMakeSound -= OnCoinsPicked_EmmitSound;
+
         PlayerController.onPlayerAttack -= OnPlayerAttack_AttackSound;
         PlayerController.onPlayerJump -= OnPlayerJump_JumpSound;
         PlayerController.onPlayerDash -= OnPlayerDash_DashSound;
@@ -54,45 +53,45 @@ public class SFXController : MonoBehaviour
     { 
         if (isLife)
         {
-            source.PlayOneShot(healClip);
+            sfx.PlayOneShot(healClip);
         }
         if (isExtraLife)
         {
-            source.PlayOneShot(extraLifeClip);
+            sfx.PlayOneShot(extraLifeClip);
         }
         if (isCoin)
         {
-            source.PlayOneShot(coinClip);
+            sfx.PlayOneShot(coinClip);
         }
     }
 
     public void OnPlayerAttack_AttackSound(PlayerController playerController)
     {
-        source.PlayOneShot(attackSound);
+        sfx.PlayOneShot(attackSound);
     }
 
     public void OnPlayerJump_JumpSound(PlayerController playerController)
     {
-        source.PlayOneShot(jumpSound);
+        sfx.PlayOneShot(jumpSound);
     }
 
     public void OnPlayerDash_DashSound(PlayerController playerController)
     {
-        source.PlayOneShot(dashSound);
+        sfx.PlayOneShot(dashSound);
     }
 
     public void OnPlayerHurt_HurtSound(PlayerController playerController)
     {
-        source.PlayOneShot(hurtSound);
+        sfx.PlayOneShot(hurtSound);
     }
 
     public void OnPlayerDie_GameOverSound(PlayerController playerController)
     {
-        source.PlayOneShot(deathSound);
+        sfx.PlayOneShot(deathSound);
     }
 
     public void OnPlayerDoDamage_EnemyHurtSound(PlayerDoDamage playerDoDamage)
     {
-        source.PlayOneShot(enemyHurtSound);
+        sfx.PlayOneShot(enemyHurtSound);
     }
 }

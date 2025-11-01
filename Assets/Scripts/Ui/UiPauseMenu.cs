@@ -1,17 +1,32 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UiPauseMenu : MonoBehaviour
 {
-    [SerializeField] private GameObject panelPause;
+
+    public static event Action<UiPauseMenu> onSettingsOpen;
+
+    private CanvasGroup canvas;
+    [SerializeField] private PlayerController player;
     [SerializeField] private Button btnResume;
+    [SerializeField] private Button btnSettings;
     [SerializeField] private Button btnMainMenu;
 
     private void Awake()
     {
         btnResume.onClick.AddListener(OnBtnResumeClicked);
+        btnSettings.onClick.AddListener(OnBtnSettingsClicked);
         btnMainMenu.onClick.AddListener(OnBtnMainMenuClicked);
+
+        canvas = GetComponent<CanvasGroup>();
+    }
+
+    private void Start()
+    {
+        CanvasToggle(0, false);
+        Time.timeScale = 1.0f;
     }
 
     private void OnEnable()
@@ -29,27 +44,45 @@ public class UiPauseMenu : MonoBehaviour
     private void OnDestroy()
     {
         btnResume.onClick.RemoveAllListeners();
+        btnSettings.onClick.RemoveAllListeners();
         btnMainMenu.onClick.RemoveAllListeners();
     }
 
     public void OnPause_PanelAppear(PlayerController playerController)
     {
-        panelPause.SetActive(true);
+        CanvasToggle(1, true);
+        Time.timeScale = 0f;
     }
 
     public void OnResume_PanelDisappear(PlayerController playerController)
     {
-        panelPause.SetActive(false);
+        CanvasToggle(0, false);
+        Time.timeScale = 1.0f;
+        player.isPause = false;
     }
 
     public void OnBtnResumeClicked()
     {
-        panelPause.SetActive(false);
+        CanvasToggle(0, false);
         Time.timeScale = 1.0f;
+        player.isPause = false;
+    }
+
+    public void OnBtnSettingsClicked()
+    {
+        CanvasToggle(0, false);
+        onSettingsOpen?.Invoke(this);
     }
 
     public void OnBtnMainMenuClicked()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public void CanvasToggle(int alpha, bool appear)
+    {
+        canvas.alpha = alpha;
+        canvas.interactable = appear;
+        canvas.blocksRaycasts = appear;
     }
 }

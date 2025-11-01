@@ -5,15 +5,10 @@ using UnityEngine.UI;
 public class UiDashCooldown : MonoBehaviour
 {
     [SerializeField] private PlayerDataSo data;
-    [SerializeField] private Image barLifeBackg;
-    [SerializeField] private Image barLife;
+    [SerializeField] private Image barCooldownBackg;
+    [SerializeField] private Image barCooldown;
 
-    private bool isReseting = false;
-
-    private void Start()
-    {
-        isReseting = false;
-    }
+    private IEnumerator ResetingDashUi;
 
     private void OnEnable()
     {
@@ -24,28 +19,30 @@ public class UiDashCooldown : MonoBehaviour
     {
         PlayerController.onPlayerDash -= OnPlayerDash_StartCooldown;
         StopAllCoroutines();
+        ResetingDashUi = null;
     }
 
     public void OnPlayerDash_StartCooldown(PlayerController playerController)
     {
-        barLife.fillAmount = 0;
-        if (!isReseting)
-            StartCoroutine(nameof(ResetingDash));
+        barCooldown.fillAmount = 0;
+
+        if (ResetingDashUi != null)
+            StopCoroutine(ResetingDashUi);
+
+        ResetingDashUi = ResetingDash();
+        StartCoroutine(ResetingDashUi);
     }
 
     public IEnumerator ResetingDash()
     {
-        isReseting = true;
-        float wait = 0.01f;
         float clock = 0;
         while (clock < data.dashCooldown)
         {
-            yield return new WaitForSeconds(wait);
-            clock += wait;
+            clock += Time.deltaTime;
             float lerp = clock / data.dashCooldown;
-            barLife.fillAmount = lerp;
+            barCooldown.fillAmount = lerp;
+            yield return null;
         }
-        isReseting = false;
-        yield return null;
+        ResetingDashUi = null;
     }
 }

@@ -23,5 +23,6 @@ public class PlayerAnimations : MonoBehaviour
     public void OnAnimating_SetState(PlayerController playerController, int animInt)
     {
         animator.SetInteger(state, animInt);
+        Debug.Log("New state: " + animInt);
     }
 }

@@ -21,7 +21,7 @@ public class PlayerAttack : MonoBehaviour
     private void OnPlayerAttack_ActivateDamageZone(PlayerController playerController)
     {
         if (!isAttacking)
-            StartCoroutine(nameof(WaitingToDeactivate));
+            StartCoroutine(WaitingToDeactivate());
     }
 
     private IEnumerator WaitingToDeactivate()
@@ -34,6 +34,5 @@ public class PlayerAttack : MonoBehaviour
         swordColliderSide.SetActive(false);
         swordColliderUp.SetActive(false);
         isAttacking = false;
-        yield return null;
     }
 }

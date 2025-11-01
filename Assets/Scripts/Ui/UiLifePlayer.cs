@@ -33,7 +33,7 @@ public class UiLifePlayer : MonoBehaviour
 
     private void HealthSystem_onDie()
     {
+        textLife.text = "0";
         barLife.fillAmount = 0;
-        barLifeBackg.fillAmount = 0;
     }
 }

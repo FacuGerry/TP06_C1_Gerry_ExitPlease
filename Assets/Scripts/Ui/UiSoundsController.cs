@@ -14,6 +14,10 @@ public class UiSoundsController : MonoBehaviour
         masterSlider.value = data.masterVol;
         musicSlider.value = data.musicVol;
         sfxSlider.value = data.sfxVol;
+
+        OnMasterChanged(data.masterVol);
+        OnMusicChanged(data.musicVol);
+        OnSFXChanged(data.sfxVol);
     }
 
     private void Update()

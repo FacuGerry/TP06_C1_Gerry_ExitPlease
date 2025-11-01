@@ -29,7 +29,7 @@ public class SFXController : MonoBehaviour
 
         PlayerController.onPlayerAttack += OnPlayerAttack_AttackSound;
         PlayerController.onPlayerJump += OnPlayerJump_JumpSound;
-        PlayerController.onPlayerDash -= OnPlayerDash_DashSound;
+        PlayerController.onPlayerDash += OnPlayerDash_DashSound;
         PlayerController.onPlayerHurt += OnPlayerHurt_HurtSound;
         PlayerController.onPlayerDie += OnPlayerDie_GameOverSound;
 
@@ -68,30 +68,36 @@ public class SFXController : MonoBehaviour
     public void OnPlayerAttack_AttackSound(PlayerController playerController)
     {
         sfx.PlayOneShot(attackSound);
+        Debug.Log("OnPlayerAttack_AttackSound");
     }
 
     public void OnPlayerJump_JumpSound(PlayerController playerController)
     {
         sfx.PlayOneShot(jumpSound);
+        Debug.Log("OnPlayerJump_JumpSound");
     }
 
     public void OnPlayerDash_DashSound(PlayerController playerController)
     {
         sfx.PlayOneShot(dashSound);
+        Debug.Log("OnPlayerDash_DashSound");
     }
 
     public void OnPlayerHurt_HurtSound(PlayerController playerController)
     {
         sfx.PlayOneShot(hurtSound);
+        Debug.Log("OnPlayerHurt_HurtSound");
     }
 
     public void OnPlayerDie_GameOverSound(PlayerController playerController)
     {
         sfx.PlayOneShot(deathSound);
+        Debug.Log("OnPlayerDie_GameOverSound");
     }
 
     public void OnPlayerDoDamage_EnemyHurtSound(PlayerDoDamage playerDoDamage)
     {
         sfx.PlayOneShot(enemyHurtSound);
+        Debug.Log("OnPlayerDoDamage_EnemyHurtSound");
     }
 }
